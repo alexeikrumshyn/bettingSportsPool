@@ -1,4 +1,4 @@
-# React Express Starter Pack
+# React Express Starter Pack... transformed into a sports betting pool
 
 > Create full stack apps with React and Express. Run your client and server with a single command. 
 
@@ -33,6 +33,9 @@ npm run client
 
 Brad Traversy
 [Traversy Media](http://www.traversymedia.com)
+
+Sports Pool Edits by Alexei Krumshyn
+alexei.w.k@gmail.com
 
 ### Version
 
