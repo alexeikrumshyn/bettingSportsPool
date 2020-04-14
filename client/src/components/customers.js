@@ -9,6 +9,7 @@ class Customers extends Component {
     };
   }
 
+  //gets called automatically when component is mounted
   componentDidMount() {
     fetch('/api/customers')
       .then(res => res.json())
