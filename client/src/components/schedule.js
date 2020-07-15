@@ -30,7 +30,7 @@ class Schedule extends Component {
 	//var date = this.getCurrentDate()
 	
 	//use this day as today for now
-	var date = '2019-05-02'
+	var date = '2019-05-03'
 	
     fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
 	  .then(res => res.json())
@@ -43,13 +43,48 @@ class Schedule extends Component {
 	  )
   }
   
-  ftn(id) {
-	  let e = document.getElementById("schedule")
-	  if (e.style.display === "none") {
-		e.style.display = "block";
-	  } else {
-		e.style.display = "none";
+  processBets() {
+	  let table = document.getElementById("schedule")
+	  let bets = []
+	  
+	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
+		   
+		   let awayTeam = row.cells[0].firstChild
+		   let homeTeam = row.cells[1].firstChild
+		   let betValue = row.cells[2].firstChild.value
+		   
+		   let thisBet = {}
+		   
+		   if (awayTeam.checked)
+			   thisBet.team = awayTeam.value
+		   else if (homeTeam.checked)
+			   thisBet.team = homeTeam.value
+		   else { //neither team selected
+			   continue
+		   }
+		   
+		   thisBet.amount = betValue
+		   bets.push(thisBet)
+			   
+		   
+		   /*
+		   for (var j = 0, col; col = row.cells[j]; j++) {
+			 
+			 if (col.firstChild) {
+				 //console.log(col.firstChild.id) //get ID
+				 //console.log(col.firstChild.value) //get input text
+				 //console.log(col.firstChild.checked) //get radio button value
+				 
+				 if (col.firstChild.checked)
+					 thisBet[col.firstChild.value] = 
+				 
+			 }
+		   } */
 	  }
+	  if (bets.length == 0)
+		  alert("Please make at least one bet before submitting.")
+
+	  console.log(bets)
   }
 
   render() {
@@ -66,8 +101,8 @@ class Schedule extends Component {
 			  <input 	type="radio" 
 						id={game.teams.away.team.id}
 						name={game.gamePk}
-						value={game.teams.away.team.name}
-						onclick={this.ftn(game.teams.away.team.id)}>
+						value={game.teams.away.team.name}>
+						
 			  </input>
 			  <label for={game.teams.away.team.id}>{game.teams.away.team.name}</label>
 			</th>
@@ -85,6 +120,8 @@ class Schedule extends Component {
 		  </tr>
 		)}
 		</table>
+	
+		<button onClick={() => { this.processBets()} }>Submit</button>
       </div>
     );
   }
