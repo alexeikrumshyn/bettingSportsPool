@@ -43,6 +43,10 @@ class Schedule extends Component {
 	  )
   }
   
+  isNum(val) {
+	  return val.match(/^[0-9]+$/) != null
+  }
+  
   processBets() {
 	  let table = document.getElementById("schedule")
 	  let bets = []
@@ -52,6 +56,12 @@ class Schedule extends Component {
 		   let awayTeam = row.cells[0].firstChild
 		   let homeTeam = row.cells[1].firstChild
 		   let betValue = row.cells[2].firstChild.value
+
+		   
+		   if (!this.isNum(betValue)) {
+			   alert("Bet value "+betValue+" invalid - must contain digits only. Try again.")
+			   return
+		   }
 		   
 		   let thisBet = {}
 		   
@@ -86,6 +96,31 @@ class Schedule extends Component {
 
 	  console.log(bets)
   }
+  
+  clearBet(gameID, clearAll=false) {
+	  let table = document.getElementById("schedule")
+	  
+	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
+		   
+		   let thisGameID = row.cells[0].firstChild.name
+		   if (thisGameID == gameID || clearAll) {
+			   console.log("CLEAR"+i)
+			   
+			   //clear away team
+			   row.cells[0].firstChild.checked = false
+			   //clear home team
+			   row.cells[1].firstChild.checked = false
+			   //clear bet value
+			   row.cells[2].firstChild.value = ""
+		   }
+		   
+	  }
+	  
+  }
+  
+  clearAllBets() {
+	  this.clearBet(0, true)
+  }
 
   render() {
     return (
@@ -117,11 +152,13 @@ class Schedule extends Component {
 			</th>
 			
 			<th><input type="text" id={game.gamePk} name={game.gamePk}></input></th>
+			<th><button onClick={() => { this.clearBet(game.gamePk)}}>Clear</button></th>
 		  </tr>
 		)}
 		</table>
 	
 		<button onClick={() => { this.processBets()} }>Submit</button>
+		<button onClick={() => { this.clearAllBets()} }>Clear All</button>
       </div>
     );
   }
