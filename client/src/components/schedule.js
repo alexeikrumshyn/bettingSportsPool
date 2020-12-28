@@ -9,6 +9,7 @@ class Schedule extends Component {
     };
   }
   
+  //returns string in YYYY-MM-DD format
   getCurrentDate() {
 		var d = new Date(),
 			month = '' + (d.getMonth() + 1),
@@ -23,14 +24,14 @@ class Schedule extends Component {
 		return [year, month, day].join('-');
 	}
 
-  //gets called automatically when component is mounted
+  //gets called automatically when component is mounted - fetch schedule
   componentDidMount() {
 	
 	/*uses current date - needs try catch block because if no games present, will return undefined*/
 	//var date = this.getCurrentDate()
 	
 	//use this day as today for now
-	var date = '2019-05-03'
+	var date = '2019-05-04'
 	
     fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
 	  .then(res => res.json())
@@ -43,10 +44,12 @@ class Schedule extends Component {
 	  )
   }
   
+  //returns true if number, false otherwise
   isNum(val) {
-	  return val.match(/^[0-9]+$/) != null
+	  return !isNaN(val);
   }
   
+  //run checks and save bets
   processBets() {
 	  let table = document.getElementById("schedule")
 	  let bets = []
@@ -57,7 +60,7 @@ class Schedule extends Component {
 		   let homeTeam = row.cells[1].firstChild
 		   let betValue = row.cells[2].firstChild.value
 
-		   
+		   //check for valid number
 		   if (!this.isNum(betValue)) {
 			   alert("Bet value "+betValue+" invalid - must contain digits only. Try again.")
 			   return
@@ -73,30 +76,43 @@ class Schedule extends Component {
 			   continue
 		   }
 		   
+		   //check if bet value empty
+		   if (betValue == "") {
+			   alert("Bet on "+thisBet.team+" has no value - please enter a value or clear to continue.")
+			   return
+		   }
 		   thisBet.amount = betValue
-		   bets.push(thisBet)
-			   
 		   
-		   /*
-		   for (var j = 0, col; col = row.cells[j]; j++) {
-			 
-			 if (col.firstChild) {
-				 //console.log(col.firstChild.id) //get ID
-				 //console.log(col.firstChild.value) //get input text
-				 //console.log(col.firstChild.checked) //get radio button value
-				 
-				 if (col.firstChild.checked)
-					 thisBet[col.firstChild.value] = 
-				 
-			 }
-		   } */
+		   
+		   bets.push(thisBet)
+		  
 	  }
-	  if (bets.length == 0)
+	  //check if no bets made
+	  if (bets.length == 0) {
 		  alert("Please make at least one bet before submitting.")
-
-	  console.log(bets)
+		  return
+	  }
+	  
+	  if (this.confirmBets(bets))
+		console.log(bets)
   }
   
+  //allow user to review and confirm bets - return confirmation status
+  confirmBets(bets) {
+	  return window.confirm("Please confirm your bets and press OK to submit:\n\n"+this.betsToString(bets))
+  }
+  
+  //returns string representation of all bets given
+  betsToString(bets) {
+	  
+	  let str = ""
+	  for (var i = 0; i < bets.length; i++) {
+		  str += bets[i].amount + ' on ' + bets[i].team + '\n'
+	  }
+	  return str
+  }
+  
+  //clears row of given game ID
   clearBet(gameID, clearAll=false) {
 	  let table = document.getElementById("schedule")
 	  
@@ -112,12 +128,11 @@ class Schedule extends Component {
 			   row.cells[1].firstChild.checked = false
 			   //clear bet value
 			   row.cells[2].firstChild.value = ""
-		   }
-		   
+		   } 
 	  }
-	  
   }
   
+  //clears all rows
   clearAllBets() {
 	  this.clearBet(0, true)
   }
