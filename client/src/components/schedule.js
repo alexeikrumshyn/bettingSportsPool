@@ -12,43 +12,87 @@ class Schedule extends Component {
   constructor() {
     super();
     this.state = {
-      schedule: []
+      schedule: [],
+	  //date: this.getTodayDate()
+	  date: '2019-05-04'
     };
+	this.setUserName()
   }
   
-  //returns string in YYYY-MM-DD format
-  getCurrentDate() {
-		var d = new Date(),
-			month = '' + (d.getMonth() + 1),
-			day = '' + d.getDate(),
-			year = d.getFullYear();
+  //set first name of current user
+  setUserName() {
+	  var userId = firebase.auth().currentUser.uid;
+	  firebase.database().ref('/users/' + userId).once('value')
+		.then((snapshot) => {
+			this.setState({
+				userFirstName: snapshot.val().firstname,
+				userLastName: snapshot.val().lastname,
+				userID: snapshot.val().uid
+			})
+		});
+  }
+  
+  //input: integer
+  incrementDate(increment) {
+	  let newDate = new Date(this.parseDate()) //get date
+	  console.log(newDate)
+	  newDate.setDate(newDate.getDate() + increment)
+	  console.log(newDate)
+	  this.setState({ date: this.formatDate(newDate) })
+	  this.updateSchedule(this.state.date)
+  }
+  
+  //input: date object, returns string in YYYY-MM-DD format
+  formatDate(d) {
+	  let month = '' + (d.getMonth());
+	  let day = '' + d.getDate();
+	  let year = d.getFullYear();
 
-		if (month.length < 2) 
-			month = '0' + month;
-		if (day.length < 2) 
-			day = '0' + day;
+	  if (month.length < 2) 
+	  	month = '0' + month;
+	  if (day.length < 2) 
+		day = '0' + day;
 		
-		return [year, month, day].join('-');
-	}
-
-  //gets called automatically when component is mounted - fetch schedule
-  componentDidMount() {
-	
-	/*uses current date - needs try catch block because if no games present, will return undefined*/
-	//var date = this.getCurrentDate()
-	
-	//use this day as today for now
-	var date = '2019-05-04'
-	
-    fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
+	  return [year, month, day].join('-');
+  }
+  
+  //input: string in YYYY-MM-DD format, returns date object
+  parseDate(d=this.state.date) {
+	  let arr = d.split('-')
+	  return new Date(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]))
+  }
+  
+  //today's string in YYYY-MM-DD format
+  getTodayDate() {
+	  return this.formatDate(new Date())
+  }
+  
+  //fetches schedule based on given date ('YYYY-MM-DD')
+  updateSchedule(date) {
+	  fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
 	  .then(res => res.json())
 	  .then(
 		(data) => {
-			this.setState({
-				schedule: data.dates[0].games
-			});
+			try {
+				console.log(date)
+				this.setState({
+					schedule: data.dates[0].games
+				});
+			} catch(err) {
+				console.log(data)
+				alert("error loading schedule")
+			}
 		}
 	  )
+  }
+
+  //gets called automatically when component is mounted
+  componentDidMount() {
+	
+	/*uses current date - needs try catch block because if no games present, will return undefined*/
+
+	this.updateSchedule(this.state.date)
+    
   }
   
   //returns true if number, false otherwise
@@ -113,8 +157,8 @@ class Schedule extends Component {
   writeToDB(bets) {
 	  
 	  let db = firebase.database()
-	  let date = this.getCurrentDate()
-	  let uid = firebase.auth().currentUser.uid
+	  let date = this.state.currentDate()
+	  let uid = this.state.userID
 	  
 	  //add user id to bet and save
 	  for (var i = 0; i < bets.length; i++) {
@@ -149,7 +193,6 @@ class Schedule extends Component {
 		   
 		   let thisGameID = row.cells[0].firstChild.name
 		   if (thisGameID == gameID || clearAll) {
-			   console.log("CLEAR"+i)
 			   
 			   //clear away team
 			   row.cells[0].firstChild.checked = false
@@ -169,11 +212,16 @@ class Schedule extends Component {
   render() {
     return (
       <div>
-	    <h2>Welcome {firebase.auth().currentUser.email}</h2>
+		{this.state.userFirstName && (
+		  <h2>Welcome, {this.state.userFirstName}</h2>
+		)}
 		<hr />
-        <h2>Today's Schedule</h2>
-		<table id="schedule">
+        <h2>Schedule</h2>
+		<button onClick={() => { this.incrementDate(-1)}}>Prev</button>
+		<button disabled>{this.state.date}</button>
+		<button onClick={() => { this.incrementDate(1)}}>Next</button>
 		
+		<table id="schedule">
 		<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
 		
 		{this.state.schedule.map(game => 
