@@ -7,6 +7,10 @@ import firebase from "firebase/app";
 
 // Add the Firebase services that you want to use
 import "firebase/auth";
+import "firebase/database";
+
+//starting points
+var startPts = 50
 
 class Login extends Component {
   constructor(props) {
@@ -75,13 +79,33 @@ class Login extends Component {
 	   firebase.auth().createUserWithEmailAndPassword(email, password)
 	  .then((user) => {
 		this.clearFields()
-		alert('Account successfully created.')
+		this.writeToDB(user)
+		alert('Account successfully created. You can now login.')
 	  })
 	  .catch((error) => {
 		var errorCode = error.code;
 		var errorMessage = error.message;
 		alert("Error: "+errorMessage+" ("+errorCode+")")
 	  });
+  }
+  
+  //writes user info to db
+  writeToDB(user) {
+	  let firstname = document.getElementById("firstname").value
+	  let lastname = document.getElementById("lastname").value
+	  	  
+	  var newUser = {
+		  firstname: firstname,
+		  lastname: lastname,
+		  email: user.user.email,
+		  points: startPts
+	  }
+	  
+	  var updates = {}
+	  updates[user.user.uid] = newUser
+	  
+	  return firebase.database().ref().child('users').update(updates);
+	  
   }
   
   //clear fields
@@ -124,6 +148,8 @@ class Login extends Component {
 			  <hr />
 			  
 			  <h2>Don't have an account? Create one below.</h2>
+			  <p>First Name: <input type='text' id='firstname'></input></p>
+			  <p>Last Name: <input type='text' id='lastname'></input></p>
 			  <p>Email: <input type='text' id='newuser'></input></p>
 			  <p>Password: <input type='password' id='newpw'></input></p>
 			  <p>Confirm Password: <input type='password' id='newpw2'></input></p>

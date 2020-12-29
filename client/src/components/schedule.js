@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import './schedule.css';
 
+// Firebase App (the core Firebase SDK) is always required and
+// must be listed before other Firebase SDKs
+import firebase from "firebase/app";
+
+// Add the Firebase services that you want to use
+import "firebase/database";
+
 class Schedule extends Component {
   constructor() {
     super();
@@ -68,11 +75,13 @@ class Schedule extends Component {
 		   
 		   let thisBet = {}
 		   
-		   if (awayTeam.checked)
+		   if (awayTeam.checked) {
 			   thisBet.team = awayTeam.value
-		   else if (homeTeam.checked)
+			   thisBet.gameID = awayTeam.name
+		   } else if (homeTeam.checked) {
 			   thisBet.team = homeTeam.value
-		   else { //neither team selected
+			   thisBet.gameID = homeTeam.name
+		   } else { //neither team selected
 			   continue
 		   }
 		   
@@ -93,8 +102,28 @@ class Schedule extends Component {
 		  return
 	  }
 	  
-	  if (this.confirmBets(bets))
+	  if (this.confirmBets(bets)) {
 		console.log(bets)
+		this.writeToDB(bets)
+		this.clearAllBets()
+	  }
+  }
+  
+  //write to firebase db
+  writeToDB(bets) {
+	  
+	  let db = firebase.database()
+	  let date = this.getCurrentDate()
+	  let uid = firebase.auth().currentUser.uid
+	  
+	  //add user id to bet and save
+	  for (var i = 0; i < bets.length; i++) {
+		  
+		  //use gameID as key and leave the rest for the bet properties
+		  let {gameID, ...thisBet} = bets[i]
+		  
+		  db.ref('bets/'+date+'/'+gameID+'/'+uid+'/').set(thisBet)
+	  }
   }
   
   //allow user to review and confirm bets - return confirmation status
@@ -140,10 +169,12 @@ class Schedule extends Component {
   render() {
     return (
       <div>
+	    <h2>Welcome {firebase.auth().currentUser.email}</h2>
+		<hr />
         <h2>Today's Schedule</h2>
 		<table id="schedule">
 		
-		<tr><th>Away</th><th>Home</th><th></th></tr>
+		<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
 		
 		{this.state.schedule.map(game => 
 		  <tr>
