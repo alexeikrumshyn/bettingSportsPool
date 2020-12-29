@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 //import Teams from './components/teams';
 import Schedule from './components/schedule';
+import Login from './components/login';
 
 //Main screen js code
 class App extends Component {
@@ -12,7 +13,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Hockey Betting Pool</h1>
         </header>
-		<Schedule />
+		<Login />
       </div>
     );
   }
