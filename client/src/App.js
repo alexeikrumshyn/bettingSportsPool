@@ -13,7 +13,9 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Hockey Betting Pool</h1>
         </header>
-		<Login />
+		<Login title="Logged In">
+			<Schedule />
+		</Login>
       </div>
     );
   }
