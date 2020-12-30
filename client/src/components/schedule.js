@@ -32,14 +32,13 @@ class Schedule extends Component {
 		});
   }
   
-  //input: integer
+  //input: integer, also updates state and returns updated date
   incrementDate(increment) {
 	  let newDate = new Date(this.parseDate()) //get date
-	  console.log(newDate)
 	  newDate.setDate(newDate.getDate() + increment)
-	  console.log(newDate)
 	  this.setState({ date: this.formatDate(newDate) })
-	  this.updateSchedule(this.state.date)
+	  //this.updateSchedule(this.getDate())
+	  return this.formatDate(newDate)
   }
   
   //input: date object, returns string in YYYY-MM-DD format
@@ -59,7 +58,7 @@ class Schedule extends Component {
   //input: string in YYYY-MM-DD format, returns date object
   parseDate(d=this.state.date) {
 	  let arr = d.split('-')
-	  return new Date(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]))
+	  return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10), parseInt(arr[2], 10))
   }
   
   //today's string in YYYY-MM-DD format
@@ -67,19 +66,25 @@ class Schedule extends Component {
 	  return this.formatDate(new Date())
   }
   
-  //fetches schedule based on given date ('YYYY-MM-DD')
+  //get date, optionally incremented by given days
+  getDate(increment=0) {
+	  let d = this.parseDate()
+	  d.setDate(d.getDate() + increment)
+	  return this.formatDate(d)
+  }
+  
+  //fetches schedule based on given date
   updateSchedule(date) {
 	  fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
 	  .then(res => res.json())
 	  .then(
 		(data) => {
 			try {
-				console.log(date)
 				this.setState({
 					schedule: data.dates[0].games
 				});
 			} catch(err) {
-				console.log(data)
+				console.log(err)
 				alert("error loading schedule")
 			}
 		}
@@ -157,7 +162,7 @@ class Schedule extends Component {
   writeToDB(bets) {
 	  
 	  let db = firebase.database()
-	  let date = this.state.currentDate()
+	  let date = this.getDate()
 	  let uid = this.state.userID
 	  
 	  //add user id to bet and save
@@ -217,9 +222,9 @@ class Schedule extends Component {
 		)}
 		<hr />
         <h2>Schedule</h2>
-		<button onClick={() => { this.incrementDate(-1)}}>Prev</button>
-		<button disabled>{this.state.date}</button>
-		<button onClick={() => { this.incrementDate(1)}}>Next</button>
+		<button onClick={() => {this.updateSchedule(this.incrementDate(-1))}}>{this.getDate(-1)}</button>
+		<button disabled>{this.getDate()}</button>
+		<button onClick={() => {this.updateSchedule(this.incrementDate(1))}}>{this.getDate(1)}</button>
 		
 		<table id="schedule">
 		<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
