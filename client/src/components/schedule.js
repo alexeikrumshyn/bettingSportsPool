@@ -14,7 +14,7 @@ class Schedule extends Component {
     this.state = {
       schedule: [],
 	  //date: this.getTodayDate()
-	  date: '2019-05-04'
+	  date: '2021-01-01'
     };
 	this.setUserName()
   }
@@ -37,13 +37,13 @@ class Schedule extends Component {
 	  let newDate = new Date(this.parseDate()) //get date
 	  newDate.setDate(newDate.getDate() + increment)
 	  this.setState({ date: this.formatDate(newDate) })
-	  //this.updateSchedule(this.getDate())
 	  return this.formatDate(newDate)
   }
   
   //input: date object, returns string in YYYY-MM-DD format
+  //note: month + 1 because date objects use Jan as month 0
   formatDate(d) {
-	  let month = '' + (d.getMonth());
+	  let month = '' + (d.getMonth()+1);
 	  let day = '' + d.getDate();
 	  let year = d.getFullYear();
 
@@ -56,9 +56,10 @@ class Schedule extends Component {
   }
   
   //input: string in YYYY-MM-DD format, returns date object
+  //note: month-1 because date objects use Jan as month 0
   parseDate(d=this.state.date) {
 	  let arr = d.split('-')
-	  return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10), parseInt(arr[2], 10))
+	  return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10)-1, parseInt(arr[2], 10))
   }
   
   //today's string in YYYY-MM-DD format
@@ -79,14 +80,18 @@ class Schedule extends Component {
 	  .then(res => res.json())
 	  .then(
 		(data) => {
-			try {
+			console.log(data)
+			
+			if (data.totalGames > 0) { //if there are games
 				this.setState({
 					schedule: data.dates[0].games
 				});
-			} catch(err) {
-				console.log(err)
-				alert("error loading schedule")
+			} else {
+				this.setState({
+					schedule: []
+				});
 			}
+			
 		}
 	  )
   }
@@ -227,7 +232,14 @@ class Schedule extends Component {
 		<button onClick={() => {this.updateSchedule(this.incrementDate(1))}}>{this.getDate(1)}</button>
 		
 		<table id="schedule">
-		<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
+		
+		{this.state.schedule.length > 0 && (
+			<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
+		)}
+		
+		{this.state.schedule.length == 0 && (
+			<p>No games scheduled for this day</p>
+		)}
 		
 		{this.state.schedule.map(game => 
 		  <tr>
