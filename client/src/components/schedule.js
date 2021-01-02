@@ -13,8 +13,7 @@ class Schedule extends Component {
     super();
     this.state = {
       schedule: [],
-	  //date: this.getTodayDate()
-	  date: '2021-01-01'
+	  date: this.getTodayDate()
     };
 	this.setUserName()
   }
@@ -27,7 +26,8 @@ class Schedule extends Component {
 			this.setState({
 				userFirstName: snapshot.val().firstname,
 				userLastName: snapshot.val().lastname,
-				userID: snapshot.val().uid
+				userID: snapshot.val().uid,
+				userPts: snapshot.val().points
 			})
 		});
   }
@@ -64,7 +64,8 @@ class Schedule extends Component {
   
   //today's string in YYYY-MM-DD format
   getTodayDate() {
-	  return this.formatDate(new Date())
+	  return '2021-01-14'
+	  //return this.formatDate(new Date())
   }
   
   //get date, optionally incremented by given days
@@ -91,7 +92,6 @@ class Schedule extends Component {
 					schedule: []
 				});
 			}
-			
 		}
 	  )
   }
@@ -245,6 +245,7 @@ class Schedule extends Component {
 		  <tr>
 			<th>
 			  <input 	type="radio" 
+						disabled={this.getDate()!=this.getTodayDate()}
 						id={game.teams.away.team.id}
 						name={game.gamePk}
 						value={game.teams.away.team.name}>
@@ -255,6 +256,7 @@ class Schedule extends Component {
 			
 			<th>
 			  <input 	type="radio" 
+						disabled={this.getDate()!=this.getTodayDate()}
 						id={game.teams.home.team.id}
 						name={game.gamePk}
 						value={game.teams.home.team.name}>
@@ -262,14 +264,25 @@ class Schedule extends Component {
 			  <label for={game.teams.home.team.id}>{game.teams.home.team.name}</label>
 			</th>
 			
-			<th><input type="text" id={game.gamePk} name={game.gamePk}></input></th>
-			<th><button onClick={() => { this.clearBet(game.gamePk)}}>Clear</button></th>
+			<th><input		type="text"
+							disabled={this.getDate()!=this.getTodayDate()}
+							id={game.gamePk}
+							name={game.gamePk}>
+			</input></th>
+			<th><button onClick={() => { this.clearBet(game.gamePk)}}
+				disabled={this.getDate()!=this.getTodayDate()}>
+				Clear</button>
+			</th>
 		  </tr>
 		)}
 		</table>
 	
-		<button onClick={() => { this.processBets()} }>Submit</button>
-		<button onClick={() => { this.clearAllBets()} }>Clear All</button>
+		<button onClick={() => { this.processBets()} }
+				disabled={this.getDate()!=this.getTodayDate()}>
+				Submit</button>
+		<button onClick={() => { this.clearAllBets()} }
+				disabled={this.getDate()!=this.getTodayDate()}>
+				Clear All</button>
       </div>
     );
   }
