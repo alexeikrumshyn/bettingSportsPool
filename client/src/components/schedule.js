@@ -23,10 +23,11 @@ class Schedule extends Component {
 	  var userId = firebase.auth().currentUser.uid;
 	  firebase.database().ref('/users/' + userId).once('value')
 		.then((snapshot) => {
+			console.log(snapshot.val())
 			this.setState({
 				userFirstName: snapshot.val().firstname,
 				userLastName: snapshot.val().lastname,
-				userID: snapshot.val().uid,
+				userID: userId,
 				userPts: snapshot.val().points
 			})
 		});
@@ -145,8 +146,6 @@ class Schedule extends Component {
 			   return
 		   }
 		   thisBet.amount = betValue
-		   
-		   
 		   bets.push(thisBet)
 		  
 	  }
@@ -156,11 +155,40 @@ class Schedule extends Component {
 		  return
 	  }
 	  
+	  //check if user bet a valid number of points
+	  if (!this.verifyBetValues(bets)) {
+		  return
+	  }
+	  
+	  //read bets back to user and ask to confirm
 	  if (this.confirmBets(bets)) {
-		console.log(bets)
 		this.writeToDB(bets)
 		this.clearAllBets()
 	  }
+  }
+  
+  //check if user bets have valid amounts
+  verifyBetValues(bets) {
+	  
+	  let totalPtsBet = 0
+	  for (var i = 0; i < bets.length; i++) {
+		  if (bets[i].amount <= 0) {
+			  alert("You cannot have a bet of 0 or less. Please correct and try again.")
+			  return false
+		  }
+		  totalPtsBet += parseInt(bets[i].amount, 10)
+	  }
+	  
+	  if (totalPtsBet == this.state.userPts) {
+		  if (!window.confirm("You are betting all your points. Are you sure?")) {
+			  return false
+		  }
+	  } else if (totalPtsBet > this.state.userPts) {
+		  alert("You are trying to bet a total of "+totalPtsBet+" points, but you only have "+this.state.userPts+". Please correct and try again.")
+		  return false
+	  }
+	  
+	  return true
   }
   
   //write to firebase db
@@ -276,6 +304,8 @@ class Schedule extends Component {
 		  </tr>
 		)}
 		</table>
+		
+		<p>You have a maximum of {this.state.userPts} points to bet.</p>
 	
 		<button onClick={() => { this.processBets()} }
 				disabled={this.getDate()!=this.getTodayDate()}>
