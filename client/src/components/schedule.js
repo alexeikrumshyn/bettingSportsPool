@@ -23,7 +23,6 @@ class Schedule extends Component {
 	  var userId = firebase.auth().currentUser.uid;
 	  firebase.database().ref('/users/' + userId).once('value')
 		.then((snapshot) => {
-			console.log(snapshot.val())
 			this.setState({
 				userFirstName: snapshot.val().firstname,
 				userLastName: snapshot.val().lastname,
@@ -65,7 +64,7 @@ class Schedule extends Component {
   
   //today's string in YYYY-MM-DD format
   getTodayDate() {
-	  return '2021-01-14'
+	  return '2021-01-13'
 	  //return this.formatDate(new Date())
   }
   
@@ -74,6 +73,46 @@ class Schedule extends Component {
 	  let d = this.parseDate()
 	  d.setDate(d.getDate() + increment)
 	  return this.formatDate(d)
+  }
+  
+  //get time where all bets must be in (earliest game of current date)
+  //input: string in YYYY-MM-DD format, returns date object with time
+  getCutoffTime() {
+	  
+	  let earliestDate = new Date("9999/12/31") //date far into future as placeholder
+	  
+	  for (let i = 0; i < this.state.schedule.length; i++) {
+		  let thisDate = this.state.schedule[i].gameDate
+		  console.log(thisDate)
+		  
+		  try {
+			  let tempDate = new Date(thisDate)
+			  if (tempDate < earliestDate) {
+				  earliestDate = tempDate
+			  }
+		  } catch(err) { //not scheduled yet
+			  console.log(err)
+			  return new Date(0)
+		  }
+	  }
+	  return earliestDate
+  }
+  
+  //get time in 12h format, returns "hh:mm xM", where x is A or P
+  getGameStartTime(rawDateStr) {
+	  let dateObj = new Date(rawDateStr)
+	  let hrs = dateObj.getHours()
+	  let ampm = hrs % 12
+	  let mins = dateObj.getMinutes()
+	  
+	  if (mins == 0)
+		  mins = '00'
+	  
+	  if (ampm == 0) { //am
+		  return hrs + ':' + mins + ' AM'
+	  } else { //pm
+		  return (hrs-12) + ':' + mins + ' PM'
+	  }
   }
   
   //fetches schedule based on given date
@@ -259,10 +298,14 @@ class Schedule extends Component {
 		<button disabled>{this.getDate()}</button>
 		<button onClick={() => {this.updateSchedule(this.incrementDate(1))}}>{this.getDate(1)}</button>
 		
+		{this.state.schedule.length > 0 && this.getDate()==this.getTodayDate() && (
+			<p>Cutoff time: {this.getGameStartTime(this.getCutoffTime().toString())}</p>
+		)}
+		
 		<table id="schedule">
 		
 		{this.state.schedule.length > 0 && (
-			<tr><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
+			<tr><th>Time</th><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
 		)}
 		
 		{this.state.schedule.length == 0 && (
@@ -271,6 +314,11 @@ class Schedule extends Component {
 		
 		{this.state.schedule.map(game => 
 		  <tr>
+		  
+			<th>
+			<p>{this.getGameStartTime(game.gameDate)}</p>
+			</th>
+		  
 			<th>
 			  <input 	type="radio" 
 						disabled={this.getDate()!=this.getTodayDate()}
@@ -305,7 +353,9 @@ class Schedule extends Component {
 		)}
 		</table>
 		
-		<p>You have a maximum of {this.state.userPts} points to bet.</p>
+		{this.getDate()==this.getTodayDate() && (
+			<p>You have a maximum of {this.state.userPts} points to bet.</p>
+		)}
 	
 		<button onClick={() => { this.processBets()} }
 				disabled={this.getDate()!=this.getTodayDate()}>
