@@ -68,6 +68,12 @@ class Schedule extends Component {
 	  //return this.formatDate(new Date())
   }
   
+  //get the current time
+  getTimeNow() {
+	  return new Date().getTime()
+	  //return new Date(2021, 0, 13, 17, 30, 1).getTime()
+  }
+  
   //get date, optionally incremented by given days
   getDate(increment=0) {
 	  let d = this.parseDate()
@@ -147,6 +153,13 @@ class Schedule extends Component {
   
   //run checks and save bets
   processBets() {
+	  
+	  //check if it is not too late
+	  if (!this.isEnabled) {
+		  alert("You have missed the cutoff time for bets today.")
+		  return
+	  }
+	  
 	  let table = document.getElementById("schedule")
 	  let bets = []
 	  
@@ -263,7 +276,7 @@ class Schedule extends Component {
 	  
 	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
 		   
-		   let thisGameID = row.cells[0].firstChild.name
+		   let thisGameID = row.cells[1].firstChild.name
 		   if (thisGameID == gameID || clearAll) {
 			   
 			   //clear away team
@@ -279,6 +292,11 @@ class Schedule extends Component {
   //clears all rows
   clearAllBets() {
 	  this.clearBet(0, true)
+  }
+
+  //returns true if element should be enabled, false otherwise
+  isEnabled() {
+	  return this.getDate()==this.getTodayDate() && this.getTimeNow() < this.getCutoffTime().getTime()
   }
 
   render() {
@@ -316,7 +334,7 @@ class Schedule extends Component {
 		  
 			<th>
 			  <input 	type="radio" 
-						disabled={this.getDate()!=this.getTodayDate()}
+						disabled={!this.isEnabled()}
 						id={game.teams.away.team.id}
 						name={game.gamePk}
 						value={game.teams.away.team.name}>
@@ -327,7 +345,7 @@ class Schedule extends Component {
 			
 			<th>
 			  <input 	type="radio" 
-						disabled={this.getDate()!=this.getTodayDate()}
+						disabled={!this.isEnabled()}
 						id={game.teams.home.team.id}
 						name={game.gamePk}
 						value={game.teams.home.team.name}>
@@ -336,27 +354,27 @@ class Schedule extends Component {
 			</th>
 			
 			<th><input		type="text"
-							disabled={this.getDate()!=this.getTodayDate()}
+							disabled={!this.isEnabled()}
 							id={game.gamePk}
 							name={game.gamePk}>
 			</input></th>
 			<th><button onClick={() => { this.clearBet(game.gamePk)}}
-				disabled={this.getDate()!=this.getTodayDate()}>
+				disabled={!this.isEnabled()}>
 				Clear</button>
 			</th>
 		  </tr>
 		)}
 		</table>
 		
-		{this.getDate()==this.getTodayDate() && (
+		{this.isEnabled() && (
 			<p>You have a maximum of {this.state.userPts} points to bet.</p>
 		)}
 	
 		<button onClick={() => { this.processBets()} }
-				disabled={this.getDate()!=this.getTodayDate()}>
+				disabled={!this.isEnabled()}>
 				Submit</button>
 		<button onClick={() => { this.clearAllBets()} }
-				disabled={this.getDate()!=this.getTodayDate()}>
+				disabled={!this.isEnabled()}>
 				Clear All</button>
       </div>
     );
