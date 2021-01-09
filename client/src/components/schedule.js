@@ -145,11 +145,6 @@ class Schedule extends Component {
     
   }
   
-  //returns true if number, false otherwise
-  isNum(val) {
-	  return !isNaN(val);
-  }
-  
   //run checks and save bets
   processBets() {
 	  let table = document.getElementById("schedule")
@@ -157,12 +152,12 @@ class Schedule extends Component {
 	  
 	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
 		   
-		   let awayTeam = row.cells[0].firstChild
-		   let homeTeam = row.cells[1].firstChild
-		   let betValue = row.cells[2].firstChild.value
+		   let awayTeam = row.cells[1].firstChild
+		   let homeTeam = row.cells[2].firstChild
+		   let betValue = row.cells[3].firstChild.value
 
 		   //check for valid number
-		   if (!this.isNum(betValue)) {
+		   if (isNaN(betValue)) {
 			   alert("Bet value "+betValue+" invalid - must contain digits only. Try again.")
 			   return
 		   }
@@ -272,11 +267,11 @@ class Schedule extends Component {
 		   if (thisGameID == gameID || clearAll) {
 			   
 			   //clear away team
-			   row.cells[0].firstChild.checked = false
-			   //clear home team
 			   row.cells[1].firstChild.checked = false
+			   //clear home team
+			   row.cells[2].firstChild.checked = false
 			   //clear bet value
-			   row.cells[2].firstChild.value = ""
+			   row.cells[3].firstChild.value = ""
 		   } 
 	  }
   }
