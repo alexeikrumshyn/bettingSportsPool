@@ -116,7 +116,16 @@ class Login extends Component {
 	  document.getElementById("newpw").value = ''
 	  document.getElementById("newpw2").value = ''
   }
-
+  
+  //handle enter button press
+  handleKeyPress(e) {
+      //it triggers by pressing the enter key
+    let code = e.keyCode || e.which
+    if(code === 13) {
+      this.signInUser()
+    }
+  }
+  
   //{children} calls the next component after login success
   render() {
 	  
@@ -140,7 +149,7 @@ class Login extends Component {
 		  <div>
 			  <h1>Sign in</h1>
 			  <p>Email: <input type='text' id='user'></input></p>
-			  <p>Password: <input type='password' id='pw'></input></p>
+			  <p>Password: <input type='password' onKeyPress={this.handleKeyPress.bind(this)} id='pw'></input></p>
 			  
 			  <button onClick={() => { this.signInUser()} }>Sign In</button>
 			  <button onClick={() => { alert("Contact Alexei to reset password (alexei.w.k@gmail.com).")} }>Forgot Password?</button>
