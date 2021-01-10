@@ -64,7 +64,7 @@ class Schedule extends Component {
   
   //today's string in YYYY-MM-DD format
   getTodayDate() {
-	  return '2021-01-13'
+	  return '2021-01-14'
 	  //return this.formatDate(new Date())
   }
   
@@ -295,8 +295,13 @@ class Schedule extends Component {
   }
 
   //returns true if element should be enabled, false otherwise
-  isEnabled() {
-	  return this.getDate()==this.getTodayDate() && this.getTimeNow() < this.getCutoffTime().getTime()
+  isEnabled(game=null) {
+	  let enableDate = (this.getDate()==this.getTodayDate() && this.getTimeNow() < this.getCutoffTime().getTime())
+	  
+	  if (game)
+		return enableDate && game.status.detailedState=='Scheduled'
+	  else
+		return enableDate
   }
 
   render() {
@@ -329,12 +334,17 @@ class Schedule extends Component {
 		  <tr>
 		  
 			<th>
-			<p>{this.getGameStartTime(game.gameDate)}</p>
+			{game.status.detailedState=='Scheduled' && (
+				<p>{this.getGameStartTime(game.gameDate)}</p>
+			)}
+			{game.status.detailedState=='Postponed' && (
+				<p>PPD</p>
+			)}
 			</th>
 		  
 			<th>
 			  <input 	type="radio" 
-						disabled={!this.isEnabled()}
+						disabled={!this.isEnabled(game)}
 						id={game.teams.away.team.id}
 						name={game.gamePk}
 						value={game.teams.away.team.name}>
@@ -345,7 +355,7 @@ class Schedule extends Component {
 			
 			<th>
 			  <input 	type="radio" 
-						disabled={!this.isEnabled()}
+						disabled={!this.isEnabled(game)}
 						id={game.teams.home.team.id}
 						name={game.gamePk}
 						value={game.teams.home.team.name}>
@@ -354,12 +364,12 @@ class Schedule extends Component {
 			</th>
 			
 			<th><input		type="text"
-							disabled={!this.isEnabled()}
+							disabled={!this.isEnabled(game)}
 							id={game.gamePk}
 							name={game.gamePk}>
 			</input></th>
 			<th><button onClick={() => { this.clearBet(game.gamePk)}}
-				disabled={!this.isEnabled()}>
+				disabled={!this.isEnabled(game)}>
 				Clear</button>
 			</th>
 		  </tr>
