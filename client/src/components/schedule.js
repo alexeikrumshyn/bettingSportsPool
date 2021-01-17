@@ -326,7 +326,7 @@ class Schedule extends Component {
 		<table id="schedule">
 		
 		{this.state.schedule.length > 0 && (
-			<tr><th>Time</th><th>Away</th><th>Home</th><th>Bet Amount</th></tr>
+			<tr><th>Time</th><th>Away</th><th></th><th>Home</th><th>Bet Amount</th></tr>
 		)}
 		
 		{this.state.schedule.length == 0 && (
@@ -337,9 +337,18 @@ class Schedule extends Component {
 		  <tr>
 		  
 			<th>
-			{game.status.detailedState=='Scheduled' && (
+			{(game.status.detailedState=='Scheduled') && (
 				<p>{this.getGameStartTime(game.gameDate)}</p>
 			)}
+			
+			{game.status.detailedState=='Final' && (
+				<p>Final</p>
+			)}
+			
+			{game.status.detailedState.includes('In Progress') && (
+				<p>LIVE</p>
+			)}
+			
 			{game.status.detailedState=='Postponed' && (
 				<p>PPD</p>
 			)}
@@ -354,6 +363,12 @@ class Schedule extends Component {
 						
 			  </input>
 			  <label for={game.teams.away.team.id}>{game.teams.away.team.name}</label>
+			</th>
+			
+			<th>
+			  {(game.status.detailedState.includes('In Progress') || game.status.detailedState=='Final') && (
+				  <p>{game.teams.away.score} - {game.teams.home.score}</p>
+			  )}
 			</th>
 			
 			<th>
