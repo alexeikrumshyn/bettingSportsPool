@@ -337,7 +337,7 @@ class Schedule extends Component {
 		  <tr>
 		  
 			<th>
-			{(game.status.detailedState=='Scheduled') && (
+			{(game.status.detailedState=='Scheduled' || game.status.detailedState=='Pre-Game') && (
 				<p>{this.getGameStartTime(game.gameDate)}</p>
 			)}
 			
