@@ -64,8 +64,8 @@ class Schedule extends Component {
   
   //today's string in YYYY-MM-DD format
   getTodayDate() {
-	  return '2021-01-14'
-	  //return this.formatDate(new Date())
+	  //return '2021-01-14'
+	  return this.formatDate(new Date())
   }
   
   //get the current time
@@ -108,17 +108,20 @@ class Schedule extends Component {
   getGameStartTime(rawDateStr) {
 	  let dateObj = new Date(rawDateStr)
 	  let hrs = dateObj.getHours()
-	  let ampm = hrs % 12
+	  let ampm = hrs / 12
 	  let mins = dateObj.getMinutes()
 	  
 	  if (mins == 0)
 		  mins = '00'
 	  
-	  if (ampm == 0) { //am
-		  return hrs + ':' + mins + ' AM'
-	  } else { //pm
+	  if (ampm == 0) //midnight
+		  return '12:' + mins + ' AM'
+	  else if (ampm == 1) //noon
+		  return '12:' + mins + ' PM'
+	  else if (ampm > 0 && ampm < 1) //am
+		  return hrs + ':' + mins + ' AM'	  
+	  else  //pm
 		  return (hrs-12) + ':' + mins + ' PM'
-	  }
   }
   
   //fetches schedule based on given date
