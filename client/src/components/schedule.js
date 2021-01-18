@@ -64,14 +64,14 @@ class Schedule extends Component {
   
   //today's string in YYYY-MM-DD format
   getTodayDate() {
-	  //return '2021-01-14'
+	  //return '2021-01-22'
 	  return this.formatDate(new Date())
   }
   
   //get the current time
   getTimeNow() {
 	  return new Date().getTime()
-	  //return new Date(2021, 0, 13, 17, 30, 1).getTime()
+	  //return new Date(2021, 0, 22, 9, 30, 1).getTime()
   }
   
   //get date, optionally incremented by given days
@@ -169,8 +169,8 @@ class Schedule extends Component {
 	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
 		   
 		   let awayTeam = row.cells[1].firstChild
-		   let homeTeam = row.cells[2].firstChild
-		   let betValue = row.cells[3].firstChild.value
+		   let homeTeam = row.cells[3].firstChild
+		   let betValue = row.cells[4].firstChild.value
 
 		   //check for valid number
 		   if (isNaN(betValue)) {
@@ -248,13 +248,24 @@ class Schedule extends Component {
 	  let date = this.getDate()
 	  let uid = this.state.userID
 	  
+	  
+	  
 	  //add user id to bet and save
 	  for (var i = 0; i < bets.length; i++) {
 		  
 		  //use gameID as key and leave the rest for the bet properties
-		  let {gameID, ...thisBet} = bets[i]
+		  //let {gameID, ...thisBet} = bets[i]
 		  
-		  db.ref('bets/'+date+'/'+gameID+'/'+uid+'/').set(thisBet)
+		  let betObj = {
+			  userID : uid,
+			  gameID : bets[i].gameID,
+			  team : bets[i].team,
+			  amount : parseInt(bets[i].amount)
+		  }
+		  
+		  let currBets = db.ref('bets/'+date)
+		  let newBet = currBets.push()
+		  newBet.set(betObj)
 	  }
   }
   
@@ -285,9 +296,9 @@ class Schedule extends Component {
 			   //clear away team
 			   row.cells[1].firstChild.checked = false
 			   //clear home team
-			   row.cells[2].firstChild.checked = false
+			   row.cells[3].firstChild.checked = false
 			   //clear bet value
-			   row.cells[3].firstChild.value = ""
+			   row.cells[4].firstChild.value = ""
 		   } 
 	  }
   }
