@@ -352,7 +352,7 @@ class Schedule extends Component {
 				<p>{this.getGameStartTime(game.gameDate)}</p>
 			)}
 			
-			{game.status.detailedState=='Final' && (
+			{(game.status.detailedState=='Final' || game.status.detailedState=='Game Over') && (
 				<p>Final</p>
 			)}
 			
@@ -377,7 +377,7 @@ class Schedule extends Component {
 			</th>
 			
 			<th>
-			  {(game.status.detailedState.includes('In Progress') || game.status.detailedState=='Final') && (
+			  {(game.status.detailedState.includes('In Progress') || game.status.detailedState=='Final' || game.status.detailedState=='Game Over') && (
 				  <p>{game.teams.away.score} - {game.teams.home.score}</p>
 			  )}
 			</th>
