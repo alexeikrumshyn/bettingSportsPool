@@ -97,7 +97,9 @@ async function adjustPoints() {
 	let results = await getGameResults()
 	for (const betID in bets) {
 		let winner = getWinningTeam(results, bets[betID].gameID)
-		if (winner == bets[betID].team)
+		if (winner == null)
+			continue
+		else if (winner == bets[betID].team)
 			userInfo[bets[betID].userID].points += parseInt(bets[betID].amount)
 		else
 			userInfo[bets[betID].userID].points -= parseInt(bets[betID].amount)
@@ -111,12 +113,16 @@ function writeInfoToDB(updatedUsers) {
 	firebase.database().ref('users/').set(updatedUsers)
 }
 
-//return winner of given game
+//return winner of given game, null if game was not completed
 function getWinningTeam(gamesArr, gameID) {
 	for (let i = 0; i < gamesArr.length; i++) {
-		if (gamesArr[i].gamePk == gameID) 
-			return ( (parseInt(gamesArr[i].teams.away.score) > parseInt(gamesArr[i].teams.home.score)) ?
+		if (gamesArr[i].gamePk == gameID) {
+			if (gamesArr[i].status.detailedState != 'Final')
+				return null
+			else 
+				return ( (parseInt(gamesArr[i].teams.away.score) > parseInt(gamesArr[i].teams.home.score)) ?
 				gamesArr[i].teams.away.team.name : gamesArr[i].teams.home.team.name)
+		}
 	}
 }
 
