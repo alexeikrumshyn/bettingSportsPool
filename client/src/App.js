@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
-//import Teams from './components/teams';
+import Standings from './components/standings';
 import Schedule from './components/schedule';
 import Login from './components/login';
 
@@ -15,6 +15,7 @@ class App extends Component {
         </header>
 		<Login title="Logged In">
 			<Schedule />
+			<Standings />
 		</Login>
       </div>
     );
