@@ -39,6 +39,18 @@ class Standings extends Component {
 		});
   }
   
+  //compares two user objects by points
+  compare(p1, p2) {
+	  const p1Pts = parseInt(p1.points, 10)
+	  const p2Pts = parseInt(p2.points, 10)
+	  if (p1Pts > p2Pts)
+		return -1
+	  else if (p1Pts < p2Pts)
+		return 1
+	  else
+		return 0
+  }
+  
   render() {
     return (
 	  
@@ -49,10 +61,14 @@ class Standings extends Component {
 		<h2>Standings</h2>
 		<table id="standings">
 		
-			<tr><th>Name</th><th>Points</th></tr>
+			<tr><th>Pos</th><th>Name</th><th>Points</th></tr>
 		
-			{this.state.users.map(user => 
+			{this.state.users.sort(this.compare).map((user, idx) => 
 			  <tr>
+			  
+				<th>
+				  <p>{idx+1}</p>
+				</th>
 			  
 				<th>
 				  <p>{user.firstname} {user.lastname}</p>
