@@ -27,6 +27,20 @@ npm run client
 # Server runs on http://localhost:5000 and client on http://localhost:3000
 ```
 
+## Hosting Setup and Deploy
+``` bash
+cd client
+
+# Build production app
+react-scripts build
+
+# Deploy preview webpage
+firebase hosting:channel:deploy <name>
+
+# Deploy app
+firebase deploy
+```
+
 ## App Info
 
 ### Author
