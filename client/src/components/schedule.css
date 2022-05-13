@@ -1,3 +1,8 @@
+table {
+  margin: auto;
+  padding: 2%;
+}
+
 tr {
   padding:0;
   list-style:none;
@@ -7,6 +12,37 @@ tr {
 
 th{
   font-size:1.2rem;
-  line-height: 2rem;
-  text-align: left;
+  text-align: center;
+}
+
+.rad {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rad:checked ~ .teamimg {
+  background-color: greenyellow;
+}
+
+.teamimg {
+  display: flex;
+}
+
+.teamimg:hover {
+  background-color: rgb(241, 241, 241);
+}
+
+img {
+  min-width: 25%;
+  min-height: 25%;
+}
+
+.score {
+  display:table-cell;
+  min-width:40px;
+}
+
+.betbox {
+  text-align: center;
 }

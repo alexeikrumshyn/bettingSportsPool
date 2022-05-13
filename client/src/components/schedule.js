@@ -16,6 +16,9 @@ class Schedule extends Component {
 	  date: this.getTodayDate()
     };
 	this.setUserName()
+	this.IMG_SRC = "https://raw.githubusercontent.com/alexeikrumshyn/bettingSportsPool/master/client/images/logos/"
+	this.TEXTART_SUFFIX = "a.webp"
+	this.LOGO_SUFFIX = "b.webp"
   }
   
   //set first name of current user
@@ -131,6 +134,7 @@ class Schedule extends Component {
 	  .then(
 		(data) => {
 			console.log(data)
+			this.clearAllBets()
 			
 			if (data.totalGames > 0) { //if there are games
 				this.setState({
@@ -168,8 +172,8 @@ class Schedule extends Component {
 	  
 	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
 		   
-		   let awayTeam = row.cells[1].firstChild
-		   let homeTeam = row.cells[3].firstChild
+		   let awayTeam = row.cells[1].firstChild.firstChild
+		   let homeTeam = row.cells[3].firstChild.firstChild
 		   let betValue = row.cells[4].firstChild.value
 
 		   //check for valid number
@@ -290,13 +294,13 @@ class Schedule extends Component {
 	  
 	  for (var i = 1, row; row = table.rows[i]; i++) { //start at 1 to skip header row
 		   
-		   let thisGameID = row.cells[1].firstChild.name
+		   let thisGameID = row.cells[1].firstChild.firstChild.name
 		   if (thisGameID == gameID || clearAll) {
 			   
 			   //clear away team
-			   row.cells[1].firstChild.checked = false
+			   row.cells[1].firstChild.firstChild.checked = false
 			   //clear home team
-			   row.cells[3].firstChild.checked = false
+			   row.cells[3].firstChild.firstChild.checked = false
 			   //clear bet value
 			   row.cells[4].firstChild.value = ""
 		   } 
@@ -366,34 +370,45 @@ class Schedule extends Component {
 			</th>
 		  
 			<th>
-			  <input 	type="radio" 
+			  <label>
+			    <input 	type="radio"  class="rad"
 						disabled={!this.isEnabled(game)}
 						id={game.teams.away.team.id}
 						name={game.gamePk}
 						value={game.teams.away.team.name}>
 						
-			  </input>
-			  <label for={game.teams.away.team.id}>{game.teams.away.team.name}</label>
+			    </input>
+				<div class="teamimg" onClick={() => { if (this.isEnabled()) document.getElementById(game.teams.away.team.id).checked=true} }>
+					<img height="100" width="100" src={this.IMG_SRC+game.teams.away.team.id+this.TEXTART_SUFFIX}/>
+					<img height="100" width="100" src={this.IMG_SRC+game.teams.away.team.id+this.LOGO_SUFFIX}/>
+				</div>
+			  </label>
 			</th>
 			
-			<th>
+			<th class="score">
 			  {(game.status.detailedState.includes('In Progress') || game.status.detailedState=='Final' || game.status.detailedState=='Game Over') && (
 				  <p>{game.teams.away.score} - {game.teams.home.score}</p>
 			  )}
 			</th>
 			
 			<th>
-			  <input 	type="radio" 
+			  <label>
+			    <input 	type="radio"  class="rad"
 						disabled={!this.isEnabled(game)}
 						id={game.teams.home.team.id}
 						name={game.gamePk}
 						value={game.teams.home.team.name}>
-			  </input>
-			  <label for={game.teams.home.team.id}>{game.teams.home.team.name}</label>
+			    </input>
+				<div class="teamimg" onClick={() => { if (this.isEnabled()) document.getElementById(game.teams.home.team.id).checked = true} }>
+					<img height="100" width="100" src={this.IMG_SRC+game.teams.home.team.id+this.LOGO_SUFFIX}/>
+					<img height="100" width="100" src={this.IMG_SRC+game.teams.home.team.id+this.TEXTART_SUFFIX}/>
+				</div>
+			  </label>
 			</th>
 			
-			<th><input		type="text"
+			<th><input		type="text" class="betbox"
 							disabled={!this.isEnabled(game)}
+							size="5"
 							id={game.gamePk}
 							name={game.gamePk}>
 			</input></th>
