@@ -33,6 +33,7 @@ th{
   color: black;
   padding: 2px 2px;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 .teamimg:hover {
