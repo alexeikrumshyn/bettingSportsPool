@@ -1,8 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const fetch = require('cross-fetch');
 admin.initializeApp();
 
-exports.updatePoints = functions.pubsub.schedule('every day 05:00').onRun(async context => {
+exports.updatePoints = functions.pubsub.schedule('every day 01:00').onRun(async context => {
     adjustPoints()
     functions.logger.log('Points ajustments finished');
   });
@@ -38,7 +39,7 @@ async function getGameBets() {
 	let yesterdayDate = new Date()
 	yesterdayDate.setDate(yesterdayDate.getDate() - 1)
 	
-	const response = await firebase.database().ref('/bets/' + formatDate(yesterdayDate)).once('value')
+	const response = await admin.database().ref('/bets/' + formatDate(yesterdayDate)).once('value')
 		.then((snapshot) => {
 			return snapshot.val()
 		});
@@ -48,7 +49,7 @@ async function getGameBets() {
 //get info of users before adjustments
 async function getUserInfo() {
 	
-	const response = await firebase.database().ref('/users/').once('value')
+	const response = await admin.database().ref('/users/').once('value')
 		.then((snapshot) => {
 			return snapshot.val()
 		});
@@ -88,7 +89,7 @@ function formatDate(d) {
 
 //write change to points in db
 function writeInfoToDB(updatedUsers) {
-	firebase.database().ref('users/').set(updatedUsers)
+	admin.database().ref('users/').set(updatedUsers)
 }
 
 //return winner of given game, null if game was not completed
