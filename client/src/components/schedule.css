@@ -13,6 +13,7 @@ tr {
 th{
   font-size:1.2rem;
   text-align: center;
+  padding: 2px;
 }
 
 .rad {
@@ -27,6 +28,12 @@ th{
 
 .teamimg {
   display: flex;
+  border: 2px solid black;
+  border-color: #e7e7e7;
+  background-color: white;
+  color: black;
+  padding: 2px 2px;
+  cursor: pointer;
 }
 
 .teamimg:hover {
