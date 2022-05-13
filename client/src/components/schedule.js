@@ -13,18 +13,19 @@ class Schedule extends Component {
     super();
     this.state = {
       schedule: [],
-	  date: this.getTodayDate()
+	  date: this.getTodayDate(),
+	  userBets: []
     };
-	this.setUserName()
+	this.setUserBets()
 	this.IMG_SRC = "https://raw.githubusercontent.com/alexeikrumshyn/bettingSportsPool/master/client/images/logos/"
 	this.TEXTART_SUFFIX = "a.webp"
 	this.LOGO_SUFFIX = "b.webp"
   }
   
   //set first name of current user
-  setUserName() {
+  async setUserName() {
 	  var userId = firebase.auth().currentUser.uid;
-	  firebase.database().ref('/users/' + userId).once('value')
+	  await firebase.database().ref('/users/' + userId).once('value')
 		.then((snapshot) => {
 			this.setState({
 				userFirstName: snapshot.val().firstname,
@@ -33,6 +34,31 @@ class Schedule extends Component {
 				userPts: snapshot.val().points
 			})
 		});
+  }
+
+  //get bets of today's games
+  async getAllBets() {
+	
+	const response = await firebase.database().ref('/bets/' + this.getTodayDate()).once('value')
+		.then((snapshot) => {
+			return snapshot.val()
+		});
+	return response
+  }
+
+  //get only current user's bets of today's games
+  async setUserBets() {
+	await this.setUserName()
+	let bets = await this.getAllBets()
+	let thisUserBets = []
+	for (const betID in bets) {
+		if (this.state.userID == bets[betID].userID) {
+			thisUserBets.push(bets[betID])
+		}
+	}
+	this.setState({
+		userBets: thisUserBets
+	});
   }
   
   //input: integer, also updates state and returns updated date
@@ -92,7 +118,6 @@ class Schedule extends Component {
 	  
 	  for (let i = 0; i < this.state.schedule.length; i++) {
 		  let thisDate = this.state.schedule[i].gameDate
-		  console.log(thisDate)
 		  
 		  try {
 			  let tempDate = new Date(thisDate)
@@ -137,7 +162,6 @@ class Schedule extends Component {
 	  .then(res => res.json())
 	  .then(
 		(data) => {
-			console.log(data)
 			this.clearAllBets()
 			
 			if (data.totalGames > 0) { //if there are games
@@ -288,7 +312,7 @@ class Schedule extends Component {
 	  
 	  let str = ""
 	  for (var i = 0; i < bets.length; i++) {
-		  str += bets[i].amount + ' on ' + bets[i].team + '\n'
+		  str += bets[i].amount + ' on ' + bets[i].team + ';\n'
 	  }
 	  return str
   }
@@ -319,6 +343,11 @@ class Schedule extends Component {
 
   //returns true if element should be enabled, false otherwise
   isEnabled(game=null) {
+
+	  //check if bets already made
+	  if (this.state.userBets.length > 0)
+	  	return false
+
 	  let enableDate = (this.getDate()==this.getTodayDate() && this.getTimeNow() < this.getCutoffTime().getTime())
 	  
 	  if (game)
@@ -332,6 +361,12 @@ class Schedule extends Component {
       <div>
 		{this.state.userFirstName && (
 		  <h2>Welcome, {this.state.userFirstName}</h2>
+		)}
+		{this.state.userBets.length > 0 && (
+		  <div>
+		    <p>You have already made your bets for today ({this.getTodayDate()}).</p>
+		    <p>{this.betsToString(this.state.userBets)}</p>
+		  </div>
 		)}
 		<hr />
         <h2>Schedule</h2>
