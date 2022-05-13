@@ -128,7 +128,11 @@ class Schedule extends Component {
   }
   
   //fetches schedule based on given date
-  updateSchedule(date) {
+  updateSchedule(date, warn=true, inc=0) {
+	  if (warn && !window.confirm("Changing dates will cause any unsubmitted bets to be reset. Press OK to confirm.")) {
+		return
+	  }
+	  this.incrementDate(inc)
 	  fetch('https://statsapi.web.nhl.com/api/v1/schedule/?date='+date)
 	  .then(res => res.json())
 	  .then(
@@ -154,7 +158,7 @@ class Schedule extends Component {
 	
 	/*uses current date - needs try catch block because if no games present, will return undefined*/
 
-	this.updateSchedule(this.state.date)
+	this.updateSchedule(this.state.date, false)
     
   }
   
@@ -331,9 +335,9 @@ class Schedule extends Component {
 		)}
 		<hr />
         <h2>Schedule</h2>
-		<button onClick={() => {this.updateSchedule(this.incrementDate(-1))}}>{this.getDate(-1)}</button>
+		<button onClick={() => {this.updateSchedule(this.getDate(-1), true, -1)}}>{this.getDate(-1)}</button>
 		<button disabled>{this.getDate()}</button>
-		<button onClick={() => {this.updateSchedule(this.incrementDate(1))}}>{this.getDate(1)}</button>
+		<button onClick={() => {this.updateSchedule(this.getDate(1), true, 1)}}>{this.getDate(1)}</button>
 		
 		{this.state.schedule.length > 0 && this.getDate()==this.getTodayDate() && (
 			<p>Cutoff time: {this.getGameStartTime(this.getCutoffTime().toString())}</p>
