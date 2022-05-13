@@ -246,6 +246,7 @@ class Schedule extends Component {
 	  if (this.confirmBets(bets)) {
 		this.writeToDB(bets)
 		this.clearAllBets()
+		this.setUserBets() //update state so new bets are disabled
 		alert("Bets successfully submitted. Good luck!")
 	  }
   }
