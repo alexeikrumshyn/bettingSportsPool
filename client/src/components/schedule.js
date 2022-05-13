@@ -18,7 +18,7 @@ class Schedule extends Component {
     };
 	this.setUserBets()
 	this.IMG_SRC = "https://raw.githubusercontent.com/alexeikrumshyn/bettingSportsPool/master/client/images/logos/"
-	this.TEXTART_SUFFIX = "a.webp"
+	this.TEXTART_SUFFIX = "a-removebg-preview.png"
 	this.LOGO_SUFFIX = "b.webp"
   }
   
