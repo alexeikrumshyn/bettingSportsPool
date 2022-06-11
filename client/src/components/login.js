@@ -49,7 +49,7 @@ class Login extends Component {
   
   //sign in existing user
   signInUser() {
-	  let email = document.getElementById("user").value
+	  let email = document.getElementById("user").value.trim()
 	  let password = document.getElementById("pw").value
 	  
 	  firebase.auth().signInWithEmailAndPassword(email, password)
@@ -66,7 +66,7 @@ class Login extends Component {
   
   //create a new user
   createUser() {
-	  let email = document.getElementById("newuser").value
+	  let email = document.getElementById("newuser").value.trim()
 	  let password = document.getElementById("newpw").value
 	  let confirm_password = document.getElementById("newpw2").value
 	  
@@ -91,8 +91,8 @@ class Login extends Component {
   
   //writes user info to db
   writeToDB(user) {
-	  let firstname = document.getElementById("firstname").value
-	  let lastname = document.getElementById("lastname").value
+	  let firstname = document.getElementById("firstname").value.trim()
+	  let lastname = document.getElementById("lastname").value.trim()
 	  	  
 	  var newUser = {
 		  firstname: firstname,
