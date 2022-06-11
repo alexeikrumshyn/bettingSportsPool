@@ -373,7 +373,7 @@ class Schedule extends Component {
 		<hr />
         <h2>Schedule</h2>
 		<button onClick={() => {this.updateSchedule(this.getDate(-1), true, -1)}}>{this.getDate(-1)}</button>
-		<button disabled>{this.getDate()}</button>
+		<p id="currDate">{this.getDate()}</p>
 		<button onClick={() => {this.updateSchedule(this.getDate(1), true, 1)}}>{this.getDate(1)}</button>
 		
 		{this.state.schedule.length > 0 && this.getDate()==this.getTodayDate() && (
