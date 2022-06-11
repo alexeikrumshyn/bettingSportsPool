@@ -32,15 +32,7 @@ class Login extends Component {
   //gets called automatically when component is mounted
   componentDidMount() {
 	  
-	  const firebaseConfig = {
-		  apiKey: "AIzaSyDXl2MWhFegAK0iiPTy6c0_mTfPH0XsbZE",
-		  authDomain: "sports-betting-pool.firebaseapp.com",
-		  projectId: "sports-betting-pool",
-		  storageBucket: "sports-betting-pool.appspot.com",
-		  messagingSenderId: "12001411941",
-		  appId: "1:12001411941:web:f2afbc892b4ebc2e53978c",
-		  measurementId: "G-2RLDV4JK57"
-	  };
+	  const firebaseConfig = require("../firebase_api_key.json")
 	  
 	  // Initialize Firebase
 	  firebase.initializeApp(firebaseConfig);

@@ -1,2 +1,4 @@
 /node_modules
 package-lock.json 
+client/src/firebase_api_key.json
+client/.firebase
