@@ -448,6 +448,7 @@ class Schedule extends Component {
 			</th>
 			
 			<th><input		type="text" class="betbox"
+							maxlength="6"
 							disabled={!this.isEnabled(game)}
 							size="5"
 							id={game.gamePk}
