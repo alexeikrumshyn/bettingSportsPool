@@ -7,6 +7,7 @@ import firebase from "firebase/app";
 
 // Add the Firebase services that you want to use
 import "firebase/database";
+import "firebase/firestore";
 
 class Schedule extends Component {
   constructor() {
@@ -94,12 +95,12 @@ class Schedule extends Component {
   //today's string in YYYY-MM-DD format
   getTodayDate() {
 	  //return '2021-01-22'
-	  return this.formatDate(new Date())
+	  return this.formatDate(new Date(firebase.firestore.Timestamp.now().toDate()))
   }
   
   //get the current time
   getTimeNow() {
-	  return new Date().getTime()
+	  return new Date(firebase.firestore.Timestamp.now().toDate()).getTime()
 	  //return new Date(2021, 0, 22, 9, 30, 1).getTime()
   }
   
