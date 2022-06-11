@@ -107,6 +107,26 @@ class Login extends Component {
 	  return firebase.database().ref().child('users').update(updates);
 	  
   }
+
+  sendPasswordReset() {
+	
+	let email = document.getElementById("user").value.trim()
+
+	if (email === "") {
+		alert("Please enter your email in the field and try again.")
+		return
+	}
+
+	firebase.auth().sendPasswordResetEmail(email)
+	.then(() => {
+	  alert("Password reset email sent! Please check your spam if you don't see it.")
+	})
+	.catch((error) => {
+	  var errorCode = error.code;
+	  var errorMessage = error.message;
+	  alert("Error "+errorCode+": "+errorMessage)
+	});	
+  }
   
   //clear fields
   clearFields() {
@@ -152,7 +172,7 @@ class Login extends Component {
 			  <p>Password: <input type='password' onKeyPress={this.handleKeyPress.bind(this)} id='pw'></input></p>
 			  
 			  <button onClick={() => { this.signInUser()} }>Sign In</button>
-			  <button onClick={() => { alert("Contact Alexei to reset password (alexei.w.k@gmail.com).")} }>Forgot Password?</button>
+			  <button onClick={() => { this.sendPasswordReset()} }>Forgot Password?</button>
 			  
 			  <hr />
 			  
