@@ -4,6 +4,7 @@ import './App.css';
 import Standings from './components/standings';
 import Schedule from './components/schedule';
 import Login from './components/login';
+import History from './components/history';
 
 //Main screen js code
 class App extends Component {
@@ -16,6 +17,7 @@ class App extends Component {
 		<Login title="Logged In">
 			<Schedule />
 			<Standings />
+      <History />
 		</Login>
       </div>
     );

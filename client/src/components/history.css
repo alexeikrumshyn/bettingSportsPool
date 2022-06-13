@@ -1,0 +1,12 @@
+tr {
+  padding:0;
+  list-style:none;
+  width: 80%;
+  margin:auto;
+}
+
+th{
+  font-size:1.2rem;
+  line-height: 2rem;
+  text-align: left;
+}
