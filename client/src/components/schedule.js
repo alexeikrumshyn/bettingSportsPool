@@ -155,7 +155,7 @@ class Schedule extends Component {
   
   //fetches schedule based on given date
   updateSchedule(date, warn=true, inc=0) {
-	  if (warn && this.isEnabled() && !window.confirm("Changing dates will cause any unsubmitted bets to be reset. Press OK to confirm.")) {
+	  if (this.state.schedule.length !== 0 && warn && this.isEnabled() && !window.confirm("Changing dates will cause any unsubmitted bets to be reset. Press OK to confirm.")) {
 		return
 	  }
 	  this.incrementDate(inc)
