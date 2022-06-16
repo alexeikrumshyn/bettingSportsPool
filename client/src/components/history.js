@@ -116,29 +116,39 @@ class History extends Component {
 	  	  
 		<div>
 		<hr />
-		<h2>Yesterday's Bets</h2>
-		<table id="results">
-		
-			<tr><th>Name</th><th>Team</th><th>Bet</th></tr>
-		
-			{Object.values(this.state.bets).map(bet => 
-			  <tr>
-			  
-				<th>
-				  <p>{this.state.users[bet.userID]['firstname']} {this.state.users[bet.userID]['lastname']}</p>
-				</th>
-			  
-				<th>
-				  <p>{bet.team}</p>
-				</th>
+
+		{this.state.bets && (
+			<div>
+				<h2>Yesterday's Bets</h2>
+				<table id="results">
 				
-				<th>
-				  <p>{bet.amount}</p>
-				</th>
+					<tr><th>Name</th><th>Team</th><th>Bet</th></tr>
 				
-			  </tr>
-			)}
-		</table>
+					{Object.values(this.state.bets).map(bet => 
+					<tr>
+					
+						<th>
+						<p>{this.state.users[bet.userID]['firstname']} {this.state.users[bet.userID]['lastname']}</p>
+						</th>
+					
+						<th>
+						<p>{bet.team}</p>
+						</th>
+						
+						<th>
+						<p>{bet.amount}</p>
+						</th>
+						
+					</tr>
+					)}
+				</table>
+			</div>
+		)}
+		{!this.state.bets && (
+			<div>
+				<p>No bets made yesterday.</p>
+			</div>
+		)}
 		<button onClick={() => { this.exportBets()}}>Download Full Bet History</button>
 		</div>
 	  )
