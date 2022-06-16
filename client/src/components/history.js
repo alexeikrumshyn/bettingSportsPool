@@ -116,10 +116,10 @@ class History extends Component {
 	  	  
 		<div>
 		<hr />
+		<h2>Yesterday's Bets</h2>
 
 		{this.state.bets && (
 			<div>
-				<h2>Yesterday's Bets</h2>
 				<table id="results">
 				
 					<tr><th>Name</th><th>Team</th><th>Bet</th></tr>
@@ -149,7 +149,7 @@ class History extends Component {
 				<p>No bets made yesterday.</p>
 			</div>
 		)}
-		<button onClick={() => { this.exportBets()}}>Download Full Bet History</button>
+		<button id="dl_results" onClick={() => { this.exportBets()}}>Download Full Bet History</button>
 		</div>
 	  )
     }

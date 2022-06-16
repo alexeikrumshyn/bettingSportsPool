@@ -19,3 +19,7 @@
   text-align: left;
   color: black;
 }
+
+#dl_results {
+  margin-bottom: 20px;
+}
